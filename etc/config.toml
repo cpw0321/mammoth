@@ -1,0 +1,25 @@
+[server]
+    address = "0.0.0.0"
+    port = 8080
+    has_pprof = true # 是否启用pprof查看性能
+    has_swagger = true # 是否展示swagger api
+    run_mode = "debug" # debug/release
+
+[mysql]
+    host = "127.0.0.1"
+    port = 3306
+    dbname = "mammoth"
+    user = "root"
+    password = "123456"
+    max_open_conns = 50
+    max_idle_conns = 6
+    db_table_prefix = "mammoth"
+
+
+[log]
+    file_name = "run.log" # 日志输出文件路径
+    max_backups = 3 # 最多保留备份个数
+    max_size = 300  #文件大小 单位兆字节
+    to_file = false # 是同时输出控制台和文件
+    is_json = false # 是否按JSON格式输出
+    level = "debug" # 日志级别
