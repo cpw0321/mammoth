@@ -49,15 +49,8 @@ type Config struct {
 }
 
 // InitConfig 初始化配置文件
-func InitConfig(path ...string) {
-	// 设置配置文件路径
-	viper.SetConfigName("config")
-	if len(path) > 0 {
-		viper.AddConfigPath(path[0])
-	} else {
-		viper.AddConfigPath("./etc")
-	}
-
+func InitConfig(configFile string) {
+	viper.SetConfigFile(configFile)
 	// 读取配置文件
 	err := viper.ReadInConfig()
 	if err != nil {

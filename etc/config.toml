@@ -13,7 +13,7 @@
     password = "123456"
     max_open_conns = 50
     max_idle_conns = 6
-    db_table_prefix = "mammoth"
+    #db_table_prefix = "mammoth"
 
 
 [log]

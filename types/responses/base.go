@@ -3,7 +3,7 @@ package responses
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cpw0321/mammoth/internal"
 )
 
 // Response 返回体
@@ -14,8 +14,8 @@ type Response struct {
 }
 
 // Success 成功
-func Success(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusOK, Response{
+func Success(c *internal.ServiceContext, data interface{}) {
+	c.Context.JSON(http.StatusOK, Response{
 		0,
 		"success",
 		data,
@@ -23,8 +23,8 @@ func Success(c *gin.Context, data interface{}) {
 }
 
 // Fail 失败
-func Fail(c *gin.Context, code int, msg string) {
-	c.JSON(http.StatusOK, Response{
+func Fail(c *internal.ServiceContext, code int, msg string) {
+	c.Context.JSON(http.StatusOK, Response{
 		code,
 		msg,
 		"",

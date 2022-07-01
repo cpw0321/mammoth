@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"net/http"
+
+	"github.com/cpw0321/mammoth/internal"
 	"github.com/cpw0321/mammoth/services/authservice"
 	"github.com/cpw0321/mammoth/types/requests"
 	"github.com/cpw0321/mammoth/types/responses"
@@ -25,17 +28,33 @@ func NewUser() *UserController {
 	}
 }
 
-func (uc *UserController) Login(c *gin.Context) {
+func (uc *UserController) Login(c *internal.ServiceContext) {
 	var r requests.UserRequest
-	err := c.BindJSON(&r)
+	err := c.Context.ShouldBind(&r)
 	if err != nil {
-		responses.Fail(c, 10000, err.Error())
+		responses.Fail(c, http.StatusBadRequest, internal.Translate(err))
 		return
 	}
 
 	err = uc.user.Login(r.UserName, r.Password)
 	if err != nil {
-		responses.Fail(c, 10001, err.Error())
+		responses.Fail(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	responses.Success(c, "")
+}
+
+func (uc *UserController) Register(c *internal.ServiceContext) {
+	var r requests.UserRequest
+	err := c.Context.ShouldBindJSON(&r)
+	if err != nil {
+		responses.Fail(c, http.StatusBadRequest, internal.Translate(err))
+		return
+	}
+
+	err = uc.user.Login(r.UserName, r.Password)
+	if err != nil {
+		responses.Fail(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	responses.Success(c, "")

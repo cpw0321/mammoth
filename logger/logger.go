@@ -5,6 +5,7 @@ package logger
 
 import (
 	"os"
+	"time"
 
 	"github.com/cpw0321/mammoth/config"
 
@@ -41,21 +42,6 @@ func InitLogger() {
 		Compress:   conf.Log.Compress,   // 是否压缩
 	}
 
-	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "time",
-		LevelKey:       "level",
-		NameKey:        "logger",
-		CallerKey:      "linenum",
-		MessageKey:     "msg",
-		StacktraceKey:  "stacktrace",
-		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.LowercaseLevelEncoder,  // 小写编码器
-		EncodeTime:     zapcore.ISO8601TimeEncoder,     // ISO8601 UTC 时间格式
-		EncodeDuration: zapcore.SecondsDurationEncoder, //
-		EncodeCaller:   zapcore.FullCallerEncoder,      // 全路径编码器
-		EncodeName:     zapcore.FullNameEncoder,
-	}
-
 	// 是否输出到控制台
 	var syncer zapcore.WriteSyncer
 	if conf.Log.ToFile {
@@ -64,12 +50,30 @@ func InitLogger() {
 		syncer = zapcore.AddSync(&hook)
 	}
 
+	//config := zapcore.EncoderConfig{
+	//	TimeKey:        "time",
+	//	LevelKey:       "level",
+	//	NameKey:        "logger",
+	//	CallerKey:      "linenum",
+	//	MessageKey:     "msg",
+	//	StacktraceKey:  "stacktrace",
+	//	LineEnding:     zapcore.DefaultLineEnding,
+	//	EncodeLevel:    zapcore.LowercaseLevelEncoder,  // 小写编码器
+	//	EncodeTime:     zapcore.ISO8601TimeEncoder,     // ISO8601 UTC 时间格式
+	//	EncodeDuration: zapcore.SecondsDurationEncoder, //
+	//	EncodeCaller:   zapcore.FullCallerEncoder,      // 全路径编码器
+	//	EncodeName:     zapcore.FullNameEncoder,
+	//}
+	config := zap.NewProductionEncoderConfig()
+	config.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+		enc.AppendString(t.Format("2006-01-02 15:04:05"))
+	}
 	// 是否json格式输出
 	var encoder zapcore.Encoder
 	if conf.Log.IsJSON {
-		encoder = zapcore.NewJSONEncoder(encoderConfig)
+		encoder = zapcore.NewJSONEncoder(config)
 	} else {
-		encoder = zapcore.NewConsoleEncoder(encoderConfig)
+		encoder = zapcore.NewConsoleEncoder(config)
 	}
 
 	// 设置日志级别

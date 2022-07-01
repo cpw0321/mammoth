@@ -26,6 +26,7 @@ func (s Server) Middleware() {
 	g.Use(middleware.Cors())
 	g.Use(middleware.Logger())
 	g.Use(middleware.Recovery())
+	g.Use(middleware.Casbin())
 }
 
 func (s Server) RegisterRouters() {
