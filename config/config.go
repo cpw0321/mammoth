@@ -1,4 +1,4 @@
-// Copyright (C) 2021 Software Technology Co., Ltd. All rights reserved.
+// Copyright 2022 The mammoth Authors
 
 // Package config implement config
 package config

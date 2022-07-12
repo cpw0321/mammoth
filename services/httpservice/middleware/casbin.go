@@ -15,15 +15,30 @@ import (
 // Casbin ...
 func Casbin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, _ := c.Get("claims")
-		waitUse := claims.(*internal.MyClaims)
+		token := c.Request.Header.Get("Authorization")
+		if token == "" {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    http.StatusBadRequest,
+				"message": "请求头Authorization不能为空",
+			})
+			return
+		}
+		myClaims, err := internal.ParseToken(token)
+		if err != nil {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    http.StatusBadRequest,
+				"message": err.Error(),
+			})
+			return
+		}
+
 		// 获取请求的URI
 		obj := c.Request.URL.RequestURI()
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色
 		as := authservice.New()
-		role, err := as.GetRoleByUserID(waitUse.UserID)
+		role, err := as.GetRoleByUserID(myClaims.UserID)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"code":    http.StatusBadRequest,

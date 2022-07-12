@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"github.com/cpw0321/mammoth/services/service/middleware"
+	"github.com/cpw0321/mammoth/services/httpservice/middleware"
 
 	"github.com/cpw0321/mammoth/config"
 	"github.com/cpw0321/mammoth/logger"

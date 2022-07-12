@@ -4,7 +4,6 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/cpw0321/mammoth/internal"
@@ -25,10 +24,8 @@ func JWT() gin.HandlerFunc {
 			return
 		}
 
-		log.Print("get token: ", token)
-
 		// parseToken 解析token包含的信息
-		claims, err := internal.ParseToken(token)
+		_, err := internal.ParseToken(token)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"code":    http.StatusUnauthorized,
@@ -37,6 +34,6 @@ func JWT() gin.HandlerFunc {
 			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去
-		c.Set("claims", claims)
+		//c.Set("claims", claims)
 	}
 }

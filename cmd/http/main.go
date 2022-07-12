@@ -7,10 +7,12 @@ import (
 	"flag"
 	"log"
 
+	"github.com/cpw0321/mammoth/internal"
+
 	"github.com/cpw0321/mammoth/config"
 	"github.com/cpw0321/mammoth/datasource/mysql"
 	"github.com/cpw0321/mammoth/logger"
-	"github.com/cpw0321/mammoth/services/service"
+	service "github.com/cpw0321/mammoth/services/httpservice"
 )
 
 var configFile = flag.String("f", "etc/config.toml", "the config file")
@@ -29,6 +31,8 @@ func main() {
 	logger.InitLogger()
 	// 连接数据库
 	mysql.InitDB()
+	// 加载权限策略
+	internal.NewCasbin(mysql.DB)
 	// 初始化服务
 	svc := service.NewServer()
 	svc.Start()

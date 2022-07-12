@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -18,7 +19,7 @@ const (
 )
 
 type MyClaims struct {
-	UserID string `json:"user_id"`
+	UserID uint `json:"user_id"`
 	jwt.StandardClaims
 }
 
@@ -52,7 +53,7 @@ func (c MyClaims) Valid() error {
 }
 
 // CreateToken 用于签发jwt token, role角色名，expireSecond过期时间, eg:user/admin来区分前后台用户
-func CreateToken(userID string) string {
+func CreateToken(userID uint) (string, error) {
 	now := time.Now()
 	claims := MyClaims{
 		userID,
@@ -63,8 +64,11 @@ func CreateToken(userID string) string {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, _ := token.SignedString(KEY)
-	return t
+	t, err := token.SignedString([]byte(KEY))
+	if err != nil {
+		return "", err
+	}
+	return t, nil
 }
 
 func ParseToken(tokenString string) (*MyClaims, error) {
@@ -91,4 +95,16 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 	}
 
 	return nil, fmt.Errorf("invalid token")
+}
+
+func GetMyClaims(c *ServiceContext) (*MyClaims, error) {
+	token := c.Context.Request.Header.Get("Authorization")
+	if token == "" {
+		return nil, errors.New("请求头Authorization不能为空")
+	}
+	myClaims, err := ParseToken(token)
+	if err != nil {
+		return nil, err
+	}
+	return myClaims, nil
 }

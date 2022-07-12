@@ -3,6 +3,8 @@ package mysql
 import (
 	"fmt"
 
+	"gorm.io/gorm/schema"
+
 	"github.com/cpw0321/mammoth/config"
 	"github.com/cpw0321/mammoth/logger"
 
@@ -22,10 +24,11 @@ func InitDB() {
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true, // 关闭AutoMigrate自动创建数据库外键约束
 		SkipDefaultTransaction:                   true, // 禁用默认事务, 获得大约 30%+ 性能提升
-		Logger:                                   logger.NewGormLogger(logger.Log),
-		//NamingStrategy: schema.NamingStrategy{
-		//	TablePrefix: c.Mysql.DBTablePrefix,
-		//},
+		//Logger:                                   logger.NewGormLogger(logger.Log),
+		NamingStrategy: schema.NamingStrategy{
+			//TablePrefix: c.Mysql.DBTablePrefix,
+			SingularTable: true,
+		},
 	})
 	if err != nil {
 		logger.Log.Errorf("open mysql is failed, err:", err)
