@@ -4,10 +4,6 @@
 package middleware
 
 import (
-	"bytes"
-	"io/ioutil"
-	"strings"
-
 	"github.com/cpw0321/mammoth/logger"
 
 	"github.com/gin-gonic/gin"
@@ -30,19 +26,20 @@ func Logger() gin.HandlerFunc {
 		// 状态码
 		statusCode := c.Writer.Status()
 
-		contentType := c.Request.Header.Get("Content-Type")
-		if strings.Contains(strings.ToLower(contentType), "application/json") {
-			// 获取body中请求参数
-			data, err := c.GetRawData()
-			if err != nil {
-				logger.Log.Errorf("get request body is failed! err: %v", err)
-			}
-			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-			// 日志格式
-			logger.Log.Infof("reqID: %v clientIP: %v reqMethod: %v reqURI: %v statusCode: %v reqBody: %v", reqID, clientIP, reqMethod, reqURI, statusCode, string(data))
-		} else {
-			logger.Log.Infof("reqID: %v clientIP: %v reqMethod: %v reqURI: %v statusCode: %v", reqID, clientIP, reqMethod, reqURI, statusCode)
-		}
+		logger.Log.Infof("reqID: %v clientIP: %v reqMethod: %v reqURI: %v statusCode: %v", reqID, clientIP, reqMethod, reqURI, statusCode)
+		//contentType := c.Request.Header.Get("Content-Type")
+		//if strings.Contains(strings.ToLower(contentType), "application/json") {
+		//	// 获取body中请求参数
+		//	data, err := c.GetRawData()
+		//	if err != nil {
+		//		logger.Log.Errorf("get request body is failed! err: %v", err)
+		//	}
+		//	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		//	// 日志格式
+		//	logger.Log.Infof("reqID: %v clientIP: %v reqMethod: %v reqURI: %v statusCode: %v reqBody: %v", reqID, clientIP, reqMethod, reqURI, statusCode, string(data))
+		//} else {
+		//	logger.Log.Infof("reqID: %v clientIP: %v reqMethod: %v reqURI: %v statusCode: %v", reqID, clientIP, reqMethod, reqURI, statusCode)
+		//}
 
 		// 处理请求
 		c.Next()

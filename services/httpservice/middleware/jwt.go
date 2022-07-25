@@ -18,7 +18,7 @@ func JWT() gin.HandlerFunc {
 		if token == "" {
 			c.JSON(http.StatusOK, gin.H{
 				"code":    http.StatusUnauthorized,
-				"message": "无权限访问",
+				"message": "Authorization不能为空",
 			})
 			c.Abort()
 			return
@@ -31,6 +31,7 @@ func JWT() gin.HandlerFunc {
 				"code":    http.StatusUnauthorized,
 				"message": err.Error(),
 			})
+			c.Abort()
 			return
 		}
 		// 继续交由下一个路由处理,并将解析出的信息传递下去

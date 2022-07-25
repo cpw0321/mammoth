@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/spf13/viper"
 )
 
 const (
-	// KEY ...
-	KEY string = "JWT-TOKEN"
-	// ExprieTime 过期时间30minutes
-	ExprieTime int = 60 * 24
+	// Key ...
+	Key = "JWT-TOKEN"
+	// ExpireTime 过期时间
+	ExpireTime int = 60 * 60 * 24
 	// ISSUER 颁发者
 	ISSUER = "mammoth"
 )
@@ -60,11 +59,11 @@ func CreateToken(userID uint) (string, error) {
 		jwt.StandardClaims{
 			IssuedAt:  now.Unix(),
 			NotBefore: now.Unix(),
-			ExpiresAt: now.Add(time.Second * time.Duration(ExprieTime)).Unix(),
+			ExpiresAt: now.Add(time.Second * time.Duration(ExpireTime)).Unix(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, err := token.SignedString([]byte(KEY))
+	t, err := token.SignedString([]byte(Key))
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +73,7 @@ func CreateToken(userID uint) (string, error) {
 func ParseToken(tokenString string) (*MyClaims, error) {
 
 	token, err := jwt.ParseWithClaims(tokenString, &MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(viper.GetString("auth_secret")), nil
+		return []byte(Key), nil
 	})
 
 	if token == nil {

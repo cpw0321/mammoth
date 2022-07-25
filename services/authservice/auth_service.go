@@ -78,21 +78,13 @@ func (as *Authservice) Login(userName string, password string) (*models.User, er
 
 func (as *Authservice) GetUserList(r authservice.UserListRequest) (*authresp.ListOfUserResponseBody, error) {
 	var page, pageSize int
-	if r.Page == common.ZERO {
-		page = common.PAGE
+	if r.Page == common.Zero {
+		page = common.Page
 	}
-	if r.PageSize == common.ZERO {
-		pageSize = common.PAGE_SIZE
+	if r.PageSize == common.Zero {
+		pageSize = common.PageSize
 	}
 	tx := as.db.Model(models.User{})
-	var count int64
-	err := tx.Count(&count).Error
-	if err != nil {
-		return nil, err
-	}
-	if count == 0 {
-		return nil, nil
-	}
 	if r.OrderField != "" && r.OrderType != "" {
 		tx.Order(fmt.Sprintf("%s %s", r.OrderField, r.OrderType))
 	} else {
@@ -100,6 +92,11 @@ func (as *Authservice) GetUserList(r authservice.UserListRequest) (*authresp.Lis
 	}
 	if r.UserName != "" {
 		tx.Where("user_name like ?", "%"+r.UserName+"%")
+	}
+	var count int64
+	err := tx.Count(&count).Error
+	if err != nil {
+		return nil, err
 	}
 	var users []models.User
 	err = tx.Limit(r.PageSize).Offset((r.Page - 1) * r.PageSize).Find(&users).Error
@@ -126,7 +123,7 @@ func (as *Authservice) GetUserList(r authservice.UserListRequest) (*authresp.Lis
 
 func (as *Authservice) GetRoleByUserID(userID uint) (*models.Role, error) {
 	var userRole models.UserRole
-	err := as.db.Model(&models.Role{}).Where("user_id = ? ", userID).First(&userRole).Error
+	err := as.db.Model(&models.UserRole{}).Where("user_id = ? ", userID).First(&userRole).Error
 	if err != nil {
 		return nil, err
 	}
@@ -173,21 +170,13 @@ func (as *Authservice) CreateUserRole(userID uint, roleID uint) error {
 
 func (as *Authservice) GetRoleList(r authservice.RoleListRequest) (*authresp.ListOfRoleResponseBody, error) {
 	var page, pageSize int
-	if r.Page == common.ZERO {
-		page = common.PAGE
+	if r.Page == common.Zero {
+		page = common.Page
 	}
-	if r.PageSize == common.ZERO {
-		pageSize = common.PAGE_SIZE
+	if r.PageSize == common.Zero {
+		pageSize = common.PageSize
 	}
 	tx := as.db.Model(models.Role{})
-	var count int64
-	err := tx.Count(&count).Error
-	if err != nil {
-		return nil, err
-	}
-	if count == 0 {
-		return nil, nil
-	}
 	if r.OrderField != "" && r.OrderType != "" {
 		tx.Order(fmt.Sprintf("%s %s", r.OrderField, r.OrderType))
 	} else {
@@ -195,6 +184,11 @@ func (as *Authservice) GetRoleList(r authservice.RoleListRequest) (*authresp.Lis
 	}
 	if r.Name != "" {
 		tx.Where("name like ?", "%"+r.Name+"%")
+	}
+	var count int64
+	err := tx.Count(&count).Error
+	if err != nil {
+		return nil, err
 	}
 	var roles []models.Role
 	err = tx.Limit(r.PageSize).Offset((r.Page - 1) * r.PageSize).Find(&roles).Error
