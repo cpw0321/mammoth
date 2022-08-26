@@ -46,6 +46,12 @@ type Config struct {
 		Password string
 		DB       int
 	}
+	Rabbitmq struct {
+		Addr string
+	}
+	Elasticsearch struct {
+		Urls []string
+	}
 }
 
 // InitConfig 初始化配置文件
